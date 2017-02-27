@@ -119,5 +119,16 @@ make install
 
 cd $FACTORY_ROOT
 
+
+# Step 8. GDB
+echo -e "\nStep 8 - GDB...\n" && sleep 2
+mkdir -p BUILD-GDB
+cd BUILD-GDB
+../SRC_COMBINED-$GDB_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --with-python --with-guile=no
+make $PARALLEL_MAKE all
+make install
+
+cd $FACTORY_ROOT
+
 trap - EXIT
 echo 'Success!'
