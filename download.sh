@@ -12,6 +12,7 @@ trap 'echo FAILED COMMAND: $previous_command' EXIT
 
 source ./vars.sh
 
+cd $TARBALLS_PATH
 # Download packages
 export http_proxy=$HTTP_PROXY https_proxy=$HTTP_PROXY ftp_proxy=$HTTP_PROXY
 wget -nc https://ftp.gnu.org/gnu/binutils/$BINUTILS_VERSION.tar.gz
@@ -29,11 +30,16 @@ wget -nc https://ftp.gnu.org/gnu/mpc/$MPC_VERSION.tar.gz
 wget -nc ftp://gcc.gnu.org/pub/gcc/infrastructure/$ISL_VERSION.tar.bz2
 wget -nc ftp://gcc.gnu.org/pub/gcc/infrastructure/$CLOOG_VERSION.tar.gz
 
+mkdir -p ../SOURCES
 # Extract everything
-for f in *.tar*; do tar xfk $f; done
+for f in *.tar*; do tar -C ../SOURCES xfk $f; done
 
-# Make symbolic links
-cd $GCC_VERSION
+cd ..
+
+# Prepare a "combined source" gcc sourcetree
+mkdir SRC_COMBINED-$GCC_VERSION
+cd SRC_COMBINED-$GCC_VERSION
+ln -s ../SOURCES/$GCC_VERSION/* .
 ln -sf `ls -1d ../mpfr-*/` mpfr
 ln -sf `ls -1d ../gmp-*/` gmp
 ln -sf `ls -1d ../mpc-*/` mpc
