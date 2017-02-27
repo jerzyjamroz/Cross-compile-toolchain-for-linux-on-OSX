@@ -10,6 +10,11 @@ trap 'echo FAILED COMMAND: $previous_command' EXIT
 # See: http://preshing.com/20141119/how-to-build-a-gcc-cross-compiler
 #-------------------------------------------------------------------------------------------
 
+if [ ! -f ./vars.sh ]; then
+    echo "This script must be run from the root of the working copy of the Cross-compile-toolchain-for-linux-on-OSX repo"
+    exit 1
+fi
+
 source ./vars.sh
 
 mkdir -p $TARBALLS_PATH

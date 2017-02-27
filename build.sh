@@ -20,6 +20,12 @@ trap 'echo FAILED COMMAND: $previous_command' EXIT
 # utility.
 #-------------------------------------------------------------------------------------------
 
+if [ ! -f ./vars.sh ]; then
+    echo "This script must be run from the root of the working copy of the Cross-compile-toolchain-for-linux-on-OSX repo"
+    exit 1
+fi
+
+
 source ./vars.sh
 
 # extra flags and env variables are needed to get this to compile on OSX
