@@ -96,10 +96,11 @@ else
 
     # Step 5. Compiler Support Library
     echo -e "\nStep 5 - building libgcc...\n" && sleep 2
-    cd build-gcc
+    cd BUILD-GCC
     make $PARALLEL_MAKE all-target-libgcc
     make install-target-libgcc
-    cd ..
+
+    cd $FACTORY_ROOT
 
     # Step 6. Standard C Library & the rest of Glibc
     echo -e "\nStep 6 - standard C library and the rest of glibc...\n" && sleep 2
