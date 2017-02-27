@@ -104,10 +104,11 @@ else
 
     # Step 6. Standard C Library & the rest of Glibc
     echo -e "\nStep 6 - standard C library and the rest of glibc...\n" && sleep 2
-    cd build-glibc
+    cd BUILD-GLIBC
     make $PARALLEL_MAKE
     make install
-    cd ..
+
+    cd $FACTORY_ROOT
 fi
 
 # Step 7. Standard C++ Library & the rest of GCC
