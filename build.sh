@@ -67,6 +67,7 @@ fi
 make $PARALLEL_MAKE gcc_cv_libc_provides_ssp=yes all-gcc
 make install-gcc
 
+
 cd $FACTORY_ROOT
 
 
@@ -82,15 +83,16 @@ if [ $USE_NEWLIB -ne 0 ]; then
 else
     # Step 4. Standard C Library Headers and Startup Files
     echo -e "\nStep 4 - standard lib headers...\n" && sleep 2
-    mkdir -p build-glibc
-    cd build-glibc
-    ../$GLIBC_VERSION/configure --prefix=$INSTALL_PATH/$TARGET --build=$MACHTYPE --host=$TARGET --target=$TARGET --with-headers=$INSTALL_PATH/$TARGET/include $CONFIGURATION_OPTIONS libc_cv_forced_unwind=yes
+    mkdir -p BUILD-GLIBC
+    cd BUILD-GLIBC
+    ../SOURCES/$GLIBC_VERSION/configure --prefix=$INSTALL_PATH/$TARGET --build=$MACHTYPE --host=$TARGET --target=$TARGET --with-headers=$INSTALL_PATH/$TARGET/include $CONFIGURATION_OPTIONS libc_cv_forced_unwind=yes
     make install-bootstrap-headers=yes install-headers
     make $PARALLEL_MAKE csu/subdir_lib
     install csu/crt1.o csu/crti.o csu/crtn.o $INSTALL_PATH/$TARGET/lib
     $TARGET-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o $INSTALL_PATH/$TARGET/lib/libc.so
     touch $INSTALL_PATH/$TARGET/include/gnu/stubs.h
-    cd ..
+
+    cd $FACTORY_ROOT
 
     # Step 5. Compiler Support Library
     echo -e "\nStep 5 - building libgcc...\n" && sleep 2
