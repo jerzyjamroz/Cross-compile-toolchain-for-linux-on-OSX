@@ -1,8 +1,11 @@
-#! /bin/bash
-INSTALL_PATH=$HOME/GCC-CURRENT
+[ "$0" = "$BASH_SOURCE" ] && {
+    echo "This script must be sourced"; exit 1
+}
+
+INSTALL_PATH=/Volumes/develop/GNU_FACTORY/INSTALL
 FACTORY_ROOT=/Volumes/GNU_FACTORY/AUTOMATIC
 TARBALLS_PATH=$FACTORY_ROOT/TARBALLS
-TARGET=x86_64-linux
+TARGET=x86_64-linux-gnu
 USE_NEWLIB=0
 LINUX_ARCH=x86_64
 CONFIGURATION_OPTIONS="--disable-multilib --disable-nls --disable-werror" # --disable-threads --disable-shared
