@@ -17,6 +17,8 @@ fi
 
 source ./vars.sh
 
+cd $FACTORY_ROOT
+
 mkdir -p $TARBALLS_PATH
 cd $TARBALLS_PATH
 # Download packages
@@ -36,9 +38,14 @@ wget -nc https://ftp.gnu.org/gnu/mpc/$MPC_VERSION.tar.gz
 wget -nc ftp://gcc.gnu.org/pub/gcc/infrastructure/$ISL_VERSION.tar.bz2
 wget -nc ftp://gcc.gnu.org/pub/gcc/infrastructure/$CLOOG_VERSION.tar.gz
 
-mkdir -p ../SOURCES
-# Extract everything
-for f in *.tar*; do tar -C ../SOURCES -xkf $f; done
+cd $FACTORY_ROOT
+if [ ! -d SOURCES ]; then
+    mkdir -p SOURCES
+    # Extract everything
+    for f in $TARBALLS_PATH/*.tar*; do echo "Unpacking $f" && tar -C SOURCES -xkf $f; done
+else
+    echo "$FACTORY_ROOT/SOURCES folder already present: assuming all tarballs have been already unpacked"
+fi
 
 cd $FACTORY_ROOT
 
