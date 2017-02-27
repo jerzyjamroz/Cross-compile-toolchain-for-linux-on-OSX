@@ -12,6 +12,7 @@ trap 'echo FAILED COMMAND: $previous_command' EXIT
 
 source ./vars.sh
 
+mkdir -p $TARBALLS_PATH
 cd $TARBALLS_PATH
 # Download packages
 export http_proxy=$HTTP_PROXY https_proxy=$HTTP_PROXY ftp_proxy=$HTTP_PROXY
@@ -21,7 +22,7 @@ if [ $USE_NEWLIB -ne 0 ]; then
     wget -nc -O newlib-master.zip https://github.com/bminor/newlib/archive/master.zip || true
     unzip -qo newlib-master.zip
 else
-    wget -nc https://www.kernel.org/pub/linux/kernel/v3.x/$LINUX_KERNEL_VERSION.tar.xz
+    wget -nc --no-check-certificate https://www.kernel.org/pub/linux/kernel/v3.x/$LINUX_KERNEL_VERSION.tar.xz
     wget -nc https://ftp.gnu.org/gnu/glibc/$GLIBC_VERSION.tar.xz
 fi
 wget -nc https://ftp.gnu.org/gnu/mpfr/$MPFR_VERSION.tar.xz
@@ -32,19 +33,19 @@ wget -nc ftp://gcc.gnu.org/pub/gcc/infrastructure/$CLOOG_VERSION.tar.gz
 
 mkdir -p ../SOURCES
 # Extract everything
-for f in *.tar*; do tar -C ../SOURCES xfk $f; done
+for f in *.tar*; do tar -C ../SOURCES -xkf $f; done
 
-cd ..
+cd $FACTORY_ROOT
 
 # Prepare a "combined source" gcc sourcetree
-mkdir SRC_COMBINED-$GCC_VERSION
+mkdir -p SRC_COMBINED-$GCC_VERSION
 cd SRC_COMBINED-$GCC_VERSION
-ln -s ../SOURCES/$GCC_VERSION/* .
-ln -sf `ls -1d ../mpfr-*/` mpfr
-ln -sf `ls -1d ../gmp-*/` gmp
-ln -sf `ls -1d ../mpc-*/` mpc
-ln -sf `ls -1d ../isl-*/` isl
-ln -sf `ls -1d ../cloog-*/` cloog
+ln -sf ../SOURCES/$GCC_VERSION/* .
+ln -sf `ls -1d ../SOURCES/mpfr-*/` mpfr
+ln -sf `ls -1d ../SOURCES/gmp-*/` gmp
+ln -sf `ls -1d ../SOURCES/mpc-*/` mpc
+ln -sf `ls -1d ../SOURCES/isl-*/` isl
+ln -sf `ls -1d ../SOURCES/cloog-*/` cloog
 cd ..
 
 trap - EXIT
