@@ -54,7 +54,7 @@ cd build-gcc
 if [ $USE_NEWLIB -ne 0 ]; then
     NEWLIB_OPTION=--with-newlib
 fi
-../$GCC_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --enable-languages=c,c++ $CONFIGURATION_OPTIONS $NEWLIB_OPTION
+../$GCC_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --enable-languages=c,c++,lto --enable-plugin -v --enable-lto $CONFIGURATION_OPTIONS $NEWLIB_OPTION
 make $PARALLEL_MAKE gcc_cv_libc_provides_ssp=yes all-gcc
 make install-gcc
 cd ..
