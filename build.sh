@@ -37,6 +37,14 @@ export BUILD_LDFLAGS='-L/opt/local/lib -lintl'
 
 cd $FACTORY_ROOT
 
+# Step 0.1 Native Binutils and GCC
+echo -e "\nStep 0.1 - native binutils...\n" && sleep 2
+mkdir -p BUILD-NATIVE_BINUTILS
+cd BUILD-NATIVE_BINUTILS
+../SOURCES/$BINUTILS_VERSION/configure --prefix=$INSTALL_PATH --program-prefix=gnu- --with-tune=native --enable-plugin --enable-lto $CONFIGURATION_OPTIONS
+make $PARALLEL_MAKE
+make install
+cd $FACTORY_ROOT
 # Step 1. Binutils
 echo -e "\nStep 1 - building binutils...\n" && sleep 2
 mkdir -p BUILD-BINUTILS
