@@ -44,15 +44,17 @@ cd BUILD-BINUTILS
 ../SOURCES/$BINUTILS_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET $CONFIGURATION_OPTIONS
 make $PARALLEL_MAKE
 make install
-cd ..
+
+cd $FACTORY_ROOT
 
 # Step 2. Linux Kernel Headers
 echo -e "\nStep 2 - Linux kernel headers...\n" && sleep 2
 if [ $USE_NEWLIB -eq 0 ]; then
-    cd $LINUX_KERNEL_VERSION
+    cd SOURCES/$LINUX_KERNEL_VERSION
     make -k -i V=1 ARCH=$LINUX_ARCH INSTALL_HDR_PATH=$INSTALL_PATH/$TARGET headers_install
-    cd ..
 fi
+
+cd $FACTORY_ROOT
 
 # Step 3. C/C++ Compilers
 echo -e "\nStep 3 - C/C++ compilers...\n" && sleep 2
