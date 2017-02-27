@@ -12,6 +12,7 @@ CONFIGURATION_OPTIONS="--disable-multilib --disable-nls --disable-werror" # --di
 PARALLEL_MAKE=-j4
 BINUTILS_VERSION=binutils-2.27
 GCC_VERSION=gcc-6.3.0
+GDB_VERSION=gdb-7.12.1
 LINUX_KERNEL_VERSION=linux-3.16
 GLIBC_VERSION=glibc-2.25
 MPFR_VERSION=mpfr-3.1.5

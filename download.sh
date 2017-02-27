@@ -37,6 +37,7 @@ wget -nc https://ftp.gnu.org/gnu/gmp/$GMP_VERSION.tar.xz
 wget -nc https://ftp.gnu.org/gnu/mpc/$MPC_VERSION.tar.gz
 wget -nc ftp://gcc.gnu.org/pub/gcc/infrastructure/$ISL_VERSION.tar.bz2
 wget -nc ftp://gcc.gnu.org/pub/gcc/infrastructure/$CLOOG_VERSION.tar.gz
+wget -nc https://ftp.gnu.org/gnu/gdb/$GDB_VERSION.tar.gz
 
 cd $FACTORY_ROOT
 if [ ! -d SOURCES ]; then
@@ -58,7 +59,21 @@ ln -sf `ls -1d ../SOURCES/gmp-*/` gmp
 ln -sf `ls -1d ../SOURCES/mpc-*/` mpc
 ln -sf `ls -1d ../SOURCES/isl-*/` isl
 ln -sf `ls -1d ../SOURCES/cloog-*/` cloog
-cd ..
 
+
+cd $FACTORY_ROOT
+
+# Prepare a "combined source" gdb sourcetree
+mkdir -p SRC_COMBINED-$GDB_VERSION
+cd SRC_COMBINED-$GDB_VERSION
+ln -sf ../SOURCES/$GDB_VERSION/* .
+ln -sf `ls -1d ../SOURCES/mpfr-*/` mpfr
+ln -sf `ls -1d ../SOURCES/gmp-*/` gmp
+ln -sf `ls -1d ../SOURCES/mpc-*/` mpc
+ln -sf `ls -1d ../SOURCES/isl-*/` isl
+ln -sf `ls -1d ../SOURCES/cloog-*/` cloog
+
+
+cd $FACTORY_ROOT
 trap - EXIT
 echo 'Success!'
