@@ -43,7 +43,7 @@ cd ..
 echo -e "\nStep 2 - Linux kernel headers...\n" && sleep 2
 if [ $USE_NEWLIB -eq 0 ]; then
     cd $LINUX_KERNEL_VERSION
-    make V=1 ARCH=$LINUX_ARCH INSTALL_HDR_PATH=$INSTALL_PATH/$TARGET headers_install
+    make -k -i V=1 ARCH=$LINUX_ARCH INSTALL_HDR_PATH=$INSTALL_PATH/$TARGET headers_install
     cd ..
 fi
 
