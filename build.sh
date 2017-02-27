@@ -29,18 +29,19 @@ fi
 source ./vars.sh
 
 # extra flags and env variables are needed to get this to compile on OSX
-export BUILD_ALL_BASE_DIR=`pwd`
-export HOST_EXTRACFLAGS="-I$BUILD_ALL_BASE_DIR/endian"
+export HOST_EXTRACFLAGS="-I$PWD/endian"
 
 # these are needed for gettext and assuming that it was installed using brew
 export BUILD_CPPFLAGS='-I/opt/local/include'
 export BUILD_LDFLAGS='-L/opt/local/lib -lintl'
 
+cd $FACTORY_ROOT
+
 # Step 1. Binutils
 echo -e "\nStep 1 - building binutils...\n" && sleep 2
-mkdir -p build-binutils
-cd build-binutils
-../$BINUTILS_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET $CONFIGURATION_OPTIONS
+mkdir -p BUILD-BINUTILS
+cd BUILD-BINUTILS
+../SOURCES/$BINUTILS_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET $CONFIGURATION_OPTIONS
 make $PARALLEL_MAKE
 make install
 cd ..
