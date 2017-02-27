@@ -113,10 +113,11 @@ fi
 
 # Step 7. Standard C++ Library & the rest of GCC
 echo -e "\nStep 7 - building C++ library and rest of gcc\n"  && sleep 2
-cd build-gcc
+cd BUILD-GCC
 make $PARALLEL_MAKE all
 make install
-cd ..
+
+cd $FACTORY_ROOT
 
 trap - EXIT
 echo 'Success!'
