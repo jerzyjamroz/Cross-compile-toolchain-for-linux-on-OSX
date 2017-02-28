@@ -138,6 +138,14 @@ make install
 
 cd $FACTORY_ROOT
 
+# Step 7.5. generate a proper include-fixed/limits.h as per http://www.linuxfromscratch.org/lfs/view/systemd/chapter05/gcc-pass2.html
+# "[...] the internal header that GCC installed is a partial, self-contained file and does not include the extended features of the system header. This was adequate for building the temporary libc, but this build of GCC now requires the full internal header. Create a full version of the internal header using a command that is identical to what the GCC build system does in normal circumstances:"
+
+echo -e "\nStep 7.5 - Generating proper include-fixed/limits.h"  && sleep 2
+cd SOURCES/$GCC_VERSION
+cat gcc/limitx.h gcc/glimits.h gcc/limity.h > $(dirname $($TARGET-g++ -print-libgcc-file-name))/include-fixed/limits.h
+
+cd $FACTORY_ROOT
 
 # Step 8. GDB
 echo -e "\nStep 8 - GDB...\n" && sleep 2
