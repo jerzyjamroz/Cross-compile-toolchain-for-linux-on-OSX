@@ -45,6 +45,17 @@ cd BUILD-NATIVE_BINUTILS
 make $PARALLEL_MAKE
 make install
 cd $FACTORY_ROOT
+
+# Step 0.2. C/C++ Compilers
+echo -e "\nStep 0.2 - native C/C++ compilers...\n" && sleep 2
+mkdir -p BUILD-NATIVE_GCC
+cd BUILD-NATIVE_GCC
+../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --program-prefix=gnu- --with-build-time-tools=/usr/bin --with-tune=native --enable-languages=c,c++,lto --enable-plugin -v --enable-lto $CONFIGURATION_OPTIONS
+make $PARALLEL_MAKE
+make install
+
+cd $FACTORY_ROOT
+
 # Step 1. Binutils
 echo -e "\nStep 1 - building binutils...\n" && sleep 2
 mkdir -p BUILD-BINUTILS
