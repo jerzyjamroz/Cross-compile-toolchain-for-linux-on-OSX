@@ -8,7 +8,10 @@ TARBALLS_PATH=$FACTORY_ROOT/TARBALLS
 TARGET=x86_64-linux-gnu
 USE_NEWLIB=0
 LINUX_ARCH=x86_64
+
+SYSROOT_OPTION="--with-sysroot=/Volumes/UbbyHD"
 CONFIGURATION_OPTIONS="--disable-multilib --disable-nls --disable-werror" # --disable-threads --disable-shared
+
 PARALLEL_MAKE=-j4
 BINUTILS_VERSION=binutils-2.27
 GCC_VERSION=gcc-6.3.0
@@ -34,3 +37,11 @@ sed ()
 export -f sed
 
 export PATH=$INSTALL_PATH/bin:$PATH
+
+# extra flags and env variables are needed to get this to compile on OSX
+export HOST_EXTRACFLAGS="-I$PWD/endian"
+
+# these are needed for gettext and assuming that it was installed using brew
+export BUILD_CPPFLAGS='-I/opt/local/include'
+export BUILD_LDFLAGS='-L/opt/local/lib -lintl'
+
