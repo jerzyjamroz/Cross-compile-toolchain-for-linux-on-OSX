@@ -9,7 +9,6 @@ TARGET=x86_64-linux-gnu
 USE_NEWLIB=0
 LINUX_ARCH=x86_64
 
-SYSROOT_OPTION="--with-sysroot=/Volumes/UbbyHD"
 CONFIGURATION_OPTIONS="--disable-multilib --disable-nls --disable-werror" # --disable-threads --disable-shared
 
 PARALLEL_MAKE=-j4

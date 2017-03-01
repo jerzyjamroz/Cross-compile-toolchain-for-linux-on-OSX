@@ -29,7 +29,7 @@ fi
 source ./vars.sh
 
 
-# Step 0.1 - Building native Binutils
+# Step 0.1 - Native Binutils
 cd $FACTORY_ROOT
 echo -e "\nStep 0.1 - native binutils...\n" && sleep 2
 mkdir -p BUILD-NATIVE_BINUTILS
@@ -56,7 +56,7 @@ cd $FACTORY_ROOT
 echo -e "\nStep 1 - building cross binutils...\n" && sleep 2
 mkdir -p BUILD-BINUTILS
 cd BUILD-BINUTILS
-../SOURCES/$BINUTILS_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET $SYSROOT_OPTION $CONFIGURATION_OPTIONS
+../SOURCES/$BINUTILS_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --with-sysroot= $CONFIGURATION_OPTIONS
 make $PARALLEL_MAKE
 make install
 
@@ -75,12 +75,19 @@ fi
 # Step 3. Minimal C/C++ Compilers for installing libc headers and compiling libc startup files
 cd $FACTORY_ROOT
 echo -e "\nStep 3 - Minimal C/C++ compilers...\n" && sleep 2
+#This is required since building with --with-sysroot will make the build system search into $INSTALL_PATH/$TARGET/usr/include
+#for headers to apply fixincludes to, and if that directory doesn't exist, make all-gcc will fail
+echo -e "\nPreStep - Create $INSTALL_PATH/$TARGET/usr/include -> ../include symlink to comply with expected layout implied by --with-sysroot\n" && sleep 2
+
+mkdir -p $INSTALL_PATH/$TARGET/usr
+ln -s ../include $INSTALL_PATH/$TARGET/usr/include
+
 mkdir -p BUILD-GCC
 cd BUILD-GCC
 if [ $USE_NEWLIB -ne 0 ]; then
     NEWLIB_OPTION=--with-newlib
 fi
-../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --enable-languages=c,c++,lto --enable-plugin -v --enable-lto $SYSROOT_OPTION $CONFIGURATION_OPTIONS $NEWLIB_OPTION
+../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --enable-languages=c,c++,lto --enable-plugin -v --enable-lto --without-headers --with-sysroot=$INSTALL_PATH/$TARGET $CONFIGURATION_OPTIONS $NEWLIB_OPTION
 make $PARALLEL_MAKE gcc_cv_libc_provides_ssp=yes all-gcc
 make install-gcc
 
@@ -171,9 +178,11 @@ else
 fi
 
 # Step 7. Standard C++ Library & the rest of GCC
+#NOTE: We reconfigure here to remove the --without-headers configure option we used when making the core-xgcc needed to build libc
 cd $FACTORY_ROOT
 echo -e "\nStep 7 - building C++ library and rest of gcc\n"  && sleep 2
 cd BUILD-GCC
+../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --enable-languages=c,c++,lto --enable-plugin -v --enable-lto --with-sysroot=$INSTALL_PATH/$TARGET $CONFIGURATION_OPTIONS $NEWLIB_OPTION
 make $PARALLEL_MAKE all
 make install
 
@@ -184,7 +193,7 @@ cd $FACTORY_ROOT
 echo -e "\nStep 8 - GDB...\n" && sleep 2
 mkdir -p BUILD-GDB
 cd BUILD-GDB
-../SRC_COMBINED-$GDB_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --with-python --with-guile=no $SYSROOT_OPTION
+../SRC_COMBINED-$GDB_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --with-python --with-guile=no --with-sysroot=$INSTALL_PATH/$TARGET
 make $PARALLEL_MAKE all
 make install
 
