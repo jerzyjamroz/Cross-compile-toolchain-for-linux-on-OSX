@@ -41,9 +41,9 @@ make install
 
 
 
-# Step 0.2. C/C++ Compilers
+# Step 0.2. Native C/C++ Compilers
 cd $FACTORY_ROOT
-echo -e "\nStep 0.2 - Building native C/C++ compilers...\n" && sleep 2
+echo -e "\nStep 0.2 - native C/C++ compilers...\n" && sleep 2
 mkdir -p BUILD-NATIVE_GCC
 cd BUILD-NATIVE_GCC
 ../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --program-prefix=gnu- --with-build-time-tools=/usr/bin --with-tune=native --enable-languages=c,c++,lto --enable-plugin -v --enable-lto $CONFIGURATION_OPTIONS
@@ -51,12 +51,29 @@ make $PARALLEL_MAKE
 make install
 
 
+# Step 0.5 preparing SYSROOT
+# Binutils and GCC builds look for headers and libraries in a
+# specified sysroot directory.  Set up such a directory, with links
+# into the install tree we're building.
+# This is required since building with --with-sysroot will make the build system search into $SYSROOT/usr/include
+# for headers to apply fixincludes to, and if that directory doesn't exist, make all-gcc will fail
+cd $FACTORY_ROOT
+echo -e "\nStep 0.5 - preparing SYSROOT...\n" && sleep 2
+if [[ ! -d $SYSROOT ]]; then
+    mkdir -p $SYSROOT/usr
+    ln -s $INSTALL_PATH/$TARGET/include $SYSROOT/usr/include
+    for z in etc lib sbin share
+    do
+        ln -s $INSTALL_PATH/$TARGET/$z $SYSROOT/$z
+    done
+fi
+
 # Step 1. Binutils
 cd $FACTORY_ROOT
 echo -e "\nStep 1 - building cross binutils...\n" && sleep 2
 mkdir -p BUILD-BINUTILS
 cd BUILD-BINUTILS
-../SOURCES/$BINUTILS_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --with-sysroot= $CONFIGURATION_OPTIONS
+../SOURCES/$BINUTILS_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --with-sysroot=$SYSROOT $CONFIGURATION_OPTIONS
 make $PARALLEL_MAKE
 make install
 
@@ -75,19 +92,12 @@ fi
 # Step 3. Minimal C/C++ Compilers for installing libc headers and compiling libc startup files
 cd $FACTORY_ROOT
 echo -e "\nStep 3 - Minimal C/C++ compilers...\n" && sleep 2
-#This is required since building with --with-sysroot will make the build system search into $INSTALL_PATH/$TARGET/usr/include
-#for headers to apply fixincludes to, and if that directory doesn't exist, make all-gcc will fail
-echo -e "\nPreStep - Create $INSTALL_PATH/$TARGET/usr/include -> ../include symlink to comply with expected layout implied by --with-sysroot\n" && sleep 2
-
-mkdir -p $INSTALL_PATH/$TARGET/usr
-ln -s ../include $INSTALL_PATH/$TARGET/usr/include
-
 mkdir -p BUILD-GCC
 cd BUILD-GCC
 if [ $USE_NEWLIB -ne 0 ]; then
     NEWLIB_OPTION=--with-newlib
 fi
-../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --enable-languages=c,c++,lto --enable-plugin -v --enable-lto --without-headers --with-sysroot=$INSTALL_PATH/$TARGET $CONFIGURATION_OPTIONS $NEWLIB_OPTION
+../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --enable-languages=c,c++,lto --enable-plugin -v --enable-lto --without-headers --with-sysroot=$SYSROOT $CONFIGURATION_OPTIONS $NEWLIB_OPTION
 make $PARALLEL_MAKE gcc_cv_libc_provides_ssp=yes all-gcc
 make install-gcc
 
@@ -182,7 +192,7 @@ fi
 cd $FACTORY_ROOT
 echo -e "\nStep 7 - building C++ library and rest of gcc\n"  && sleep 2
 cd BUILD-GCC
-../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --enable-languages=c,c++,lto --enable-plugin -v --enable-lto --with-sysroot=$INSTALL_PATH/$TARGET $CONFIGURATION_OPTIONS $NEWLIB_OPTION
+../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --enable-languages=c,c++,lto --enable-plugin -v --enable-lto --with-sysroot=$SYSROOT $CONFIGURATION_OPTIONS $NEWLIB_OPTION
 make $PARALLEL_MAKE all
 make install
 
@@ -193,7 +203,7 @@ cd $FACTORY_ROOT
 echo -e "\nStep 8 - GDB...\n" && sleep 2
 mkdir -p BUILD-GDB
 cd BUILD-GDB
-../SRC_COMBINED-$GDB_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --with-python --with-guile=no --with-sysroot=$INSTALL_PATH/$TARGET
+../SRC_COMBINED-$GDB_VERSION/configure --prefix=$INSTALL_PATH --target=$TARGET --with-python --with-guile=no --with-sysroot=$SYSROOT
 make $PARALLEL_MAKE all
 make install
 
