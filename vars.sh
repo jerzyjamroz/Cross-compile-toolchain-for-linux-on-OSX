@@ -12,9 +12,9 @@ LINUX_ARCH=x86_64
 
 CONFIGURATION_OPTIONS="--disable-multilib --disable-nls --disable-werror" # --disable-threads --disable-shared
 
-PARALLEL_MAKE=-j4
-BINUTILS_VERSION=binutils-2.27
-GCC_VERSION=gcc-6.3.0
+PARALLEL_MAKE=-j8
+BINUTILS_VERSION=binutils-2.28
+GCC_VERSION=gcc-7.1.0
 GDB_VERSION=gdb-7.12.1
 LINUX_KERNEL_VERSION=linux-3.16
 GLIBC_VERSION=glibc-2.25
