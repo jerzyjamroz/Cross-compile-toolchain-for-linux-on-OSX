@@ -28,6 +28,13 @@ fi
 
 source ./vars.sh
 
+cd $FACTORY_ROOT
+touch ./case_check
+
+[[ -f "CASE_CHECK" ]] && { echo "Can't proceed on a case-insensitive filesystem"; rm -f ./case_check; exit 1; }
+
+rm -f ./case_check
+
 
 # Step 0.1 - Native Binutils
 cd $FACTORY_ROOT
