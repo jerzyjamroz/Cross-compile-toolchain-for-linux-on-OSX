@@ -214,6 +214,17 @@ cd BUILD-GDB
 make $PARALLEL_MAKE all
 make install
 
+# Step 9. Workaround for absolute-path sysmlinks in sysroot folders
+echo -e "\nStep 9 - Absolute-path symlinks workaround...\n" && sleep 2
+EXTERNAL_SYSROOT="/Volumes/UbbyHD"
+read -e -p "Enter absolute path to external sysroot [$EXTERNAL_SYSROOT]: " chosen_external_sysroot
+if [[ ! -z "${chosen_external_sysroot/ //}" ]]; then
+    EXTERNAL_SYSROOT="$chosen_external_sysroot"
+fi
+cd /
+sudo mkdir -p lib
+cd /lib
+sudo ln -sf "${EXTERNAL_SYSROOT}/lib/${TARGET}"
 
 trap - EXIT
 echo 'Success!'
