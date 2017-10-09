@@ -29,7 +29,7 @@ if [ $USE_NEWLIB -ne 0 ]; then
     wget -nc -O newlib-master.zip https://github.com/bminor/newlib/archive/master.zip || true
     unzip -qo newlib-master.zip
 else
-    wget -nc --no-check-certificate https://www.kernel.org/pub/linux/kernel/v3.x/$LINUX_KERNEL_VERSION.tar.xz
+    wget -nc --no-check-certificate https://www.kernel.org/pub/linux/kernel/v4.x/$LINUX_KERNEL_VERSION.tar.xz
     wget -nc https://ftp.gnu.org/gnu/glibc/$GLIBC_VERSION.tar.xz
 fi
 wget -nc https://ftp.gnu.org/gnu/mpfr/$MPFR_VERSION.tar.xz
