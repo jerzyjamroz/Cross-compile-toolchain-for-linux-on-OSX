@@ -17,6 +17,7 @@ fi
 
 source ./vars.sh
 
+mkdir -p $FACTORY_ROOT
 cd $FACTORY_ROOT
 
 mkdir -p $TARBALLS_PATH

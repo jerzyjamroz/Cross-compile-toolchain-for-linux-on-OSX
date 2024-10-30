@@ -16,7 +16,7 @@ trap 'echo FAILED COMMAND: $previous_command' EXIT
 # mess with the normal sed, perhaps add to the front of PATH the path to gnu-sed before you
 # run this script?  e.g. export PATH=/path/to/gnu-sed-directory/bin:$PATH
 #
-# This script should be run in a case-sensitive partition which you can make using OSX's disk 
+# This script should be run in a case-sensitive partition which you can make using OSX's disk
 # utility.
 #-------------------------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ cd $FACTORY_ROOT
 echo -e "\nStep 0.2 - native C/C++ compilers...\n" && sleep 2
 mkdir -p BUILD-NATIVE_GCC
 cd BUILD-NATIVE_GCC
-../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --program-prefix=gnu- --with-build-time-tools=/usr/bin --with-tune=native --enable-languages=c,c++,lto --enable-plugin -v --enable-lto $CONFIGURATION_OPTIONS
+../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --program-prefix=gnu- --with-build-time-tools=/usr/bin --with-tune=native --enable-languages=c,c++,lto --enable-plugin -v --enable-lto $CONFIGURATION_OPTIONS --with-native-system-header-dir=$NATIVE_SYSTEM_HEADER_DIR
 make $PARALLEL_MAKE
 make install
 
@@ -176,7 +176,7 @@ else
     # which is not true at the moment and so the "cat gcc/limitx.h gcc/glimits.h gcc/litmity.h >... " dance is _NOT_ peformed and only the
     # "partial, self-contained" limits.h is copied in the include-fixed directory.
     # So we have to manually do that (right after the destination "include-fixed" has been created by step 5) as follows:
-    
+
     # Step 5.5 generate proper include-fixed/limits.h
     cd $FACTORY_ROOT
     echo -e "\nStep 5.5 - Generating proper include-fixed/limits.h"  && sleep 2
