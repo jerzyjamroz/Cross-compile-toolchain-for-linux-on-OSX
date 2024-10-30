@@ -51,12 +51,15 @@ make install
 # Step 0.2. Native C/C++ Compilers
 cd $FACTORY_ROOT
 echo -e "\nStep 0.2 - native C/C++ compilers...\n" && sleep 2
+cd SRC_COMBINED-$GCC_VERSION
+./contrib/download_prerequisites
+cd ..
 mkdir -p BUILD-NATIVE_GCC
 cd BUILD-NATIVE_GCC
 # Hack to overwrite hardcoded CPP=/lib/gcc
 export CPP=$NATIVE_CPP
 #env CPP=/usr/bin/cpp - does not work
-../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --program-prefix=gnu- --with-build-time-tools=/usr/bin --with-tune=native --enable-languages=c,c++,lto --enable-plugin -v --enable-lto $CONFIGURATION_OPTIONS --with-sysroot=$NATIVE_SYSROOT
+../SRC_COMBINED-$GCC_VERSION/configure --prefix=$INSTALL_PATH --program-prefix=gnu- --with-build-time-tools=/usr/bin --with-tune=native --enable-languages=c,c++,lto --enable-plugin -v --enable-lto $CONFIGURATION_OPTIONS
 make $PARALLEL_MAKE
 make install
 unset CPP
