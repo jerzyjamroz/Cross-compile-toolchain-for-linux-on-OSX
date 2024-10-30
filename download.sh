@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 set -e
 trap 'previous_command=$this_command; this_command=$BASH_COMMAND' DEBUG
 trap 'echo FAILED COMMAND: $previous_command' EXIT

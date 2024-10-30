@@ -1,4 +1,5 @@
 # The configuration modification file
+# Requirements: coreutils
 
 [ "$0" = "$BASH_SOURCE" ] && {
     echo "This script must be sourced"; exit 1
@@ -14,7 +15,16 @@ TARGET=x86_64-linux-gnu
 USE_NEWLIB=0
 LINUX_ARCH=x86_64
 
-CONFIGURATION_OPTIONS="--disable-multilib --disable-nls --disable-werror" # --disable-threads --disable-shared
+#CONFIGURATION_OPTIONS="--disable-multilib --disable-nls --disable-werror" # --disable-threads --disable-shared
+CONFIGURATION_OPTIONS="--disable-multilib --disable-nls --disable-werror --disable-lto"
+
+#it has to be changed from /usr/include to: native_system_header_dir=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
+#NATIVE_SYSTEM_HEADER_DIR=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
+#--with-native-system-header-dir=$NATIVE_SYSTEM_HEADER_DIR
+# alternatively NATIVE_SYSROOT can be used
+NATIVE_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+# It cant be global as it affects all builds
+NATIVE_CPP=/usr/bin/cpp
 
 PARALLEL_MAKE=-j$(nproc)
 BINUTILS_VERSION=binutils-2.29.1
@@ -41,12 +51,8 @@ sed ()
 export -f sed
 
 export PATH=$INSTALL_PATH/bin:$PATH
-
 # extra flags and env variables are needed to get this to compile on OSX
 export HOST_EXTRACFLAGS="-I$PWD/endian"
-
-#it has to be changed from /usr/include to: native_system_header_dir=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
-export NATIVE_SYSTEM_HEADER_DIR=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
 
 # these are needed for gettext and assuming that it was installed using brew
 export BUILD_CPPFLAGS="-I$HOMEBREW_PREFIX/include"
