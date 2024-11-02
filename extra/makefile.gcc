@@ -1,3 +1,5 @@
+
+TOP:=$(CURDIR)
 # Variables
 WORKSPACE_DIR := $(HOME)/cross/gnu
 INSTALL_PATH := $(WORKSPACE_DIR)/install
@@ -8,16 +10,22 @@ PARALLEL_MAKE=-j$(nproc)
 
 PATH := /usr/local/opt/llvm/bin:$(PATH)
 CPPFLAGS += -I/usr/local/opt/llvm/include
-CXXFLAGS += -fexceptions -funwind-tables
+CPPFLAGS += -D_GNU_SOURCE -D__STDC_FORMAT_MACROS
+##CXXFLAGS += -fexceptions -funwind-tables
 LDFLAGS += -L/usr/local/opt/llvm/lib
-LDFLAGS += -fuse-ld=lld
 LDFLAGS += -L/usr/local/opt/llvm/lib/c++ -L/usr/local/opt/llvm/lib/unwind -lunwind
-#LDFLAGS += -Wl,--no-as-needed
+###LDFLAGS += -Bdynamic
+###LDFLAGS += -fuse-ld=lld
+###LDFLAGS += -fuse-ld=ld64.lld
+###LDFLAGS += -Wl,--no-as-needed
+###LDFLAGS += --syslibroot=$(NATIVE_SYSROOT)
+
 export PATH CPPFLAGS CXXFLAGS LDFLAGS
 
 CC=gcc
 CXX=g++
-LD=ld.lld
+###LD=ld.lld
+LD=ld64.lld
 export CC CXX LD
 # Directories
 TARBALL := $(WORKSPACE_DIR)/tarballs/$(GCC_VERSION).tar.gz
@@ -49,11 +57,15 @@ prerequisites: extract
 configure: prerequisites
 	mkdir -p $(BUILD_DIR)
 	cd $(BUILD_DIR) && ../configure \
-	    --prefix=$(INSTALL_PATH) \
-	    --enable-languages=c,c++ \
-	    --disable-multilib \
-	    --with-system-zlib \
-	    --with-sysroot=$(NATIVE_SYSROOT)
+			--prefix=$(INSTALL_PATH) \
+			--enable-languages=c,c++ \
+			--disable-multilib \
+			--with-system-zlib \
+			--disable-bootstrap \
+			--with-sysroot=$(NATIVE_SYSROOT) \
+			--with-ld=/usr/local/bin/ld64.lld
+
+###			--with-specs=$(TOP)/gcc.specs
 
 # Build GCC
 build: configure
