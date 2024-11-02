@@ -1,0 +1,67 @@
+# Variables
+WORKSPACE_DIR := $(HOME)/cross/gnu
+INSTALL_PATH := $(WORKSPACE_DIR)/install
+GCC_VERSION := gcc-14.2.0
+NATIVE_SYSROOT := /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+PARALLEL_MAKE=-j$(nproc)
+#PARALLEL_MAKE=
+
+PATH := /usr/local/opt/llvm/bin:$(PATH)
+CPPFLAGS += -I/usr/local/opt/llvm/include
+CXXFLAGS += -fexceptions -funwind-tables
+LDFLAGS += -L/usr/local/opt/llvm/lib
+LDFLAGS += -fuse-ld=lld
+LDFLAGS += -L/usr/local/opt/llvm/lib/c++ -L/usr/local/opt/llvm/lib/unwind -lunwind
+#LDFLAGS += -Wl,--no-as-needed
+export PATH CPPFLAGS CXXFLAGS LDFLAGS
+
+CC=gcc
+CXX=g++
+LD=ld.lld
+export CC CXX LD
+# Directories
+TARBALL := $(WORKSPACE_DIR)/tarballs/$(GCC_VERSION).tar.gz
+SOURCE_DIR := $(WORKSPACE_DIR)/sources/$(GCC_VERSION)
+BUILD_DIR := $(SOURCE_DIR)/build
+
+# Targets
+.PHONY: all download extract prerequisites configure build
+
+all: build
+
+# Download the GCC tarball if it does not exist
+download:
+	mkdir -p $(WORKSPACE_DIR)/tarballs
+	wget -P $(WORKSPACE_DIR)/tarballs -nc https://ftp.gnu.org/gnu/gcc/$(GCC_VERSION)/$(GCC_VERSION).tar.gz
+
+# Extract the tarball if the source directory does not exist
+extract: download
+	mkdir -p $(WORKSPACE_DIR)/sources
+	@if [ ! -d "$(SOURCE_DIR)" ]; then \
+	    tar -xzvf $(TARBALL) -C $(WORKSPACE_DIR)/sources; \
+	fi
+
+# Download prerequisites
+prerequisites: extract
+	cd $(SOURCE_DIR) && ./contrib/download_prerequisites
+
+# Configure the GCC build
+configure: prerequisites
+	mkdir -p $(BUILD_DIR)
+	cd $(BUILD_DIR) && ../configure \
+	    --prefix=$(INSTALL_PATH) \
+	    --enable-languages=c,c++ \
+	    --disable-multilib \
+	    --with-system-zlib \
+	    --with-sysroot=$(NATIVE_SYSROOT)
+
+# Build GCC
+build: configure
+	cd $(BUILD_DIR) && make $(PARALLEL_MAKE)
+
+# install:
+# 	cd $(BUILD_DIR) && make $(PARALLEL_MAKE)
+
+clean:
+	rm -rf $(BUILD_DIR)/*
+	rm -rf $(INSTALL_PATH)/*
